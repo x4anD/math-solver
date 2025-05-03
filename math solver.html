@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Solver</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h1 { color: #333; }
+    select, input, button { margin-top: 10px; display: block; padding: 8px; width: 100%; max-width: 300px; }
+    #output { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Welcome, this is your math solver.</h1>
+  <label for="problem">Choose a type of problem:</label>
+  <select id="problem">
+    <option value="">-- Select --</option>
+    <option value="geometry">Geometry</option>
+    <option value="hypotenuse">Hypotenuse</option>
+    <option value="circumference">Circumference</option>
+  </select>
+
+  <div id="geometry-type" style="display:none;">
+    <label for="dimension">Area or Volume?</label>
+    <select id="dimension">
+      <option value="">-- Select --</option>
+      <option value="area">Area</option>
+      <option value="volume">Volume</option>
+    </select>
+  </div>
+
+  <div id="inputs"></div>
+
+  <button onclick="solve()">Solve</button>
+  <div id="output"></div>
+
+  <script>
+    const problemSelect = document.getElementById("problem");
+    const geometryDiv = document.getElementById("geometry-type");
+    const dimensionSelect = document.getElementById("dimension");
+    const inputsDiv = document.getElementById("inputs");
+    const outputDiv = document.getElementById("output");
+
+    problemSelect.addEventListener("change", () => {
+      const problem = problemSelect.value;
+      geometryDiv.style.display = problem === "geometry" ? "block" : "none";
+      renderInputs();
+    });
+
+    dimensionSelect.addEventListener("change", renderInputs);
+
+    function renderInputs() {
+      const problem = problemSelect.value;
+      const dimension = dimensionSelect.value;
+      inputsDiv.innerHTML = "";
+
+      if (problem === "geometry") {
+        if (dimension === "area") {
+          inputsDiv.innerHTML = `
+            <input id="length" type="number" placeholder="Length (m)">
+            <input id="width" type="number" placeholder="Width (m)">
+          `;
+        } else if (dimension === "volume") {
+          inputsDiv.innerHTML = `
+            <input id="length" type="number" placeholder="Length (m)">
+            <input id="width" type="number" placeholder="Width (m)">
+            <input id="height" type="number" placeholder="Height (m)">
+          `;
+        }
+      } else if (problem === "hypotenuse") {
+        inputsDiv.innerHTML = `
+          <input id="a" type="number" placeholder="Side a (m)">
+          <input id="b" type="number" placeholder="Side b (m)">
+        `;
+      } else if (problem === "circumference") {
+        inputsDiv.innerHTML = `
+          <input id="radius" type="number" placeholder="Radius (m)">
+        `;
+      }
+    }
+
+    function solve() {
+      const problem = problemSelect.value;
+      const dimension = dimensionSelect.value;
+
+      let result = "";
+
+      if (problem === "geometry") {
+        const length = parseFloat(document.getElementById("length").value);
+        const width = parseFloat(document.getElementById("width").value);
+
+        if (dimension === "area") {
+          result = `The area of your rectangle is ${round(length * width)} m²`;
+        } else if (dimension === "volume") {
+          const height = parseFloat(document.getElementById("height").value);
+          result = `The volume of your object is ${round(length * width * height)} m³`;
+        } else {
+          result = "ERROR!";
+        }
+
+      } else if (problem === "hypotenuse") {
+        const a = parseFloat(document.getElementById("a").value);
+        const b = parseFloat(document.getElementById("b").value);
+        const c = Math.sqrt(a ** 2 + b ** 2);
+        result = `The hypotenuse of this triangle is ${round(c)} m`;
+
+      } else if (problem === "circumference") {
+        const radius = parseFloat(document.getElementById("radius").value);
+        const circumference = 2 * Math.PI * radius;
+        result = `The circumference of this circle is ${round(circumference)} m`;
+      }
+
+      outputDiv.textContent = result;
+    }
+
+    function round(value) {
+      return Math.round(value * 100) / 100;
+    }
+  </script>
+</body>
+</html>
